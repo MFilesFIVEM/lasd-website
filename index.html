@@ -72,7 +72,7 @@
             width: 100%;
         }
 
-        /* STICKY TABLE HEADER */
+        /* SCROLLS NATURALLY WITH WEBSITE */
         .roster-table th {
             background-color: #1b3825;
             color: #f3e5ab;
@@ -80,12 +80,11 @@
             letter-spacing: 0.5px;
             text-transform: uppercase;
             border: 1px solid #264e33;
-            padding: 8px 6px;
+            padding: 9px 8px;
             font-size: 0.8rem;
-            position: sticky;
-            top: 80px; /* Aligns right below the sticky top nav bar (80px high) */
-            z-index: 20;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            position: static;
+            z-index: 10;
+            white-space: nowrap;
         }
 
         .group-header {
@@ -95,7 +94,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border: 1px solid #264e33 !important;
         }
 
@@ -133,9 +132,10 @@
         .roster-td {
             border-right: 1px solid #b8a882;
             border-bottom: 1px solid #b8a882;
-            padding: 5px 6px;
+            padding: 7px 8px;
             font-size: 0.825rem;
             vertical-align: middle;
+            white-space: nowrap;
         }
 
         .roster-td:first-child {
@@ -188,19 +188,23 @@
         .cb-red:checked { background-color: #d62828; border-color: #991b1b; }
         .cb-red:checked::after { content: '✓'; position: absolute; color: #fff; font-size: 11px; font-weight: bold; top: -3px; left: 2px; }
 
-        /* Status Badge */
+        /* Status Badge - Centered Text */
         .status-select {
             font-weight: 600;
             border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.75rem;
+            padding: 3px 8px;
+            font-size: 0.775rem;
             border: 1px solid rgba(0,0,0,0.2);
+            white-space: nowrap;
+            text-align: center;
+            text-align-last: center;
         }
         .status-select:not(:disabled) {
             cursor: pointer;
         }
 
         .status-active { background-color: #166534; color: white; }
+        .status-ootm { background-color: #d4af37; color: #0a170e; font-weight: 800; border: 1px solid #997a15; }
         .status-loa { background-color: #d97706; color: white; }
         .status-suspended { background-color: #991b1b; color: white; }
         .status-inactive { background-color: #4b5563; color: white; }
@@ -360,7 +364,7 @@
                 </div>
             </div>
 
-            <!-- Stats Bar Matching Requested Clean Look -->
+            <!-- Stats Bar Matching Clean Look -->
             <div class="bg-[#08120a]/95 border-t border-lasd-border/40 py-5 px-4 backdrop-blur-md">
                 <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <div class="p-2 border-r border-lasd-border/30 last:border-none">
@@ -385,6 +389,21 @@
 
         <!-- MAIN HOME BODY CONTENT -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+
+            <!-- SECTION 0: OFFICER OF THE MONTH SHOWCASE -->
+            <section class="space-y-6">
+                <div class="border-b border-lasd-border/60 pb-3 flex items-center justify-between">
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-lasd-gold tracking-wide uppercase flex items-center gap-3">
+                        <i class="fa-solid fa-award text-lasd-gold"></i>
+                        <span>Officer of the Month</span>
+                    </h2>
+                    <span class="text-xs text-lasd-gold font-mono uppercase bg-lasd-gold/10 px-3 py-1 rounded border border-lasd-gold/30">October 2026 Recognition</span>
+                </div>
+
+                <div id="homeOotmContainer">
+                    <!-- Dynamically Populated From Roster Data -->
+                </div>
+            </section>
 
             <!-- SECTION 1: ANNOUNCEMENTS & DISPATCH BULLETIN -->
             <section class="space-y-6">
@@ -637,132 +656,131 @@
             </div>
         </section>
 
-        <!-- SEARCH & CONTROLS TOOLBAR -->
-        <div class="max-w-7xl mx-auto w-full px-4 sm:px-8 pt-6 pb-2">
-            <div class="bg-lasd-header border border-lasd-border/60 rounded-xl p-4 flex flex-col lg:flex-row items-center justify-between gap-4 shadow-xl">
+        <!-- SEARCH, FILTERS & CONTROLS TOOLBAR (CENTERED) -->
+        <div class="w-full flex justify-center pt-6 pb-2 px-4">
+            <div class="bg-lasd-header border border-lasd-border/60 rounded-xl p-4 flex flex-wrap items-center justify-center gap-3 shadow-xl max-w-max">
                 
                 <!-- Search Bar -->
-                <div class="relative w-full lg:w-96">
+                <div class="relative w-72 sm:w-80">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                    <input type="text" id="searchInput" oninput="renderRoster()" placeholder="Search Name, Badge, Designator, Rank..." 
+                    <input type="text" id="searchInput" oninput="renderRoster()" placeholder="Search Name, Badge, Designator..." 
                            class="w-full bg-lasd-dark text-lasd-tan pl-9 pr-4 py-2 rounded-lg border border-lasd-border focus:outline-none focus:border-lasd-gold text-xs placeholder-gray-500">
                 </div>
 
-                <!-- Filters & Action Bar -->
-                <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-end">
-                    
-                    <select id="filterGroup" onchange="renderRoster()" class="bg-lasd-dark text-lasd-tan border border-lasd-border rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-lasd-gold">
-                        <option value="ALL">All Groups</option>
-                        <option value="Department Lead">Department Lead</option>
-                        <option value="High Command">High Command</option>
-                        <option value="Low Command">Low Command</option>
-                        <option value="Patrol Supervisor">Patrol Supervisor</option>
-                        <option value="Patrol Senior">Patrol Senior</option>
-                        <option value="Patrol Deputy">Patrol Deputy</option>
-                        <option value="Trainee">Trainee</option>
-                    </select>
+                <!-- Filters -->
+                <select id="filterGroup" onchange="renderRoster()" class="bg-lasd-dark text-lasd-tan border border-lasd-border rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-lasd-gold">
+                    <option value="ALL">All Groups</option>
+                    <option value="Department Lead">Department Lead</option>
+                    <option value="High Command">High Command</option>
+                    <option value="Low Command">Low Command</option>
+                    <option value="Patrol Supervisor">Patrol Supervisor</option>
+                    <option value="Patrol Senior">Patrol Senior</option>
+                    <option value="Patrol Deputy">Patrol Deputy</option>
+                    <option value="Trainee">Trainee</option>
+                </select>
 
-                    <select id="filterStatus" onchange="renderRoster()" class="bg-lasd-dark text-lasd-tan border border-lasd-border rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-lasd-gold">
-                        <option value="ALL">All Statuses</option>
-                        <option value="Active">Active</option>
-                        <option value="LOA">LOA</option>
-                        <option value="Suspended">Suspended</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
+                <select id="filterStatus" onchange="renderRoster()" class="bg-lasd-dark text-lasd-tan border border-lasd-border rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-lasd-gold">
+                    <option value="ALL">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Officer of the Month">Officer of the Month</option>
+                    <option value="LOA">LOA</option>
+                    <option value="Suspended">Suspended</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
 
-                    <select id="filterCert" onchange="renderRoster()" class="bg-lasd-dark text-lasd-tan border border-lasd-border rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-lasd-gold">
-                        <option value="ALL">All Certifications</option>
-                        <option value="fto">FTO</option>
-                        <option value="fta">FTA</option>
-                        <option value="oss">OSS</option>
-                        <option value="seb">SEB</option>
-                        <option value="rc">RC</option>
-                        <option value="moto">Moto</option>
-                        <option value="air">Air</option>
-                        <option value="k9">K9</option>
-                    </select>
+                <select id="filterCert" onchange="renderRoster()" class="bg-lasd-dark text-lasd-tan border border-lasd-border rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-lasd-gold">
+                    <option value="ALL">All Certifications</option>
+                    <option value="fto">FTO</option>
+                    <option value="fta">FTA</option>
+                    <option value="oss">OSS</option>
+                    <option value="seb">SEB</option>
+                    <option value="rc">RC</option>
+                    <option value="moto">Moto</option>
+                    <option value="air">Air</option>
+                    <option value="k9">K9</option>
+                </select>
 
-                    <button onclick="clearFilters()" class="text-xs text-gray-400 hover:text-lasd-gold underline px-2">
-                        Reset
+                <button onclick="clearFilters()" class="text-xs text-gray-400 hover:text-lasd-gold underline px-1">
+                    Reset
+                </button>
+
+                <div class="h-5 w-px bg-lasd-border mx-1"></div>
+
+                <!-- Protected Action Buttons -->
+                <button id="addOfficerBtn" onclick="openAddOfficerModal()" class="bg-lasd-gold hover:bg-yellow-500 text-lasd-dark font-extrabold px-3.5 py-2 rounded-lg shadow-md transition hidden items-center gap-2 text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Add Deputy</span>
+                </button>
+
+                <!-- Click-Toggle Backup Dropdown -->
+                <div class="relative">
+                    <button onclick="toggleBackupMenu(event)" class="bg-lasd-green border border-lasd-border text-lasd-tan hover:text-white px-3 py-2 rounded-lg shadow transition flex items-center gap-1.5 text-xs font-semibold">
+                        <i class="fa-solid fa-database"></i>
+                        <span>Backup</span>
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
                     </button>
-
-                    <div class="h-5 w-px bg-lasd-border mx-1 hidden sm:block"></div>
-
-                    <!-- Protected Action Buttons -->
-                    <button id="addOfficerBtn" onclick="openAddOfficerModal()" class="bg-lasd-gold hover:bg-yellow-500 text-lasd-dark font-extrabold px-3.5 py-1.5 rounded-lg shadow-md transition hidden items-center gap-2 text-xs uppercase tracking-wider">
-                        <i class="fa-solid fa-user-plus"></i>
-                        <span>Add Deputy</span>
-                    </button>
-
-                    <!-- Click-Toggle Backup Dropdown -->
-                    <div class="relative">
-                        <button onclick="toggleBackupMenu(event)" class="bg-lasd-green border border-lasd-border text-lasd-tan hover:text-white px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1.5 text-xs font-semibold">
-                            <i class="fa-solid fa-database"></i>
-                            <span>Backup</span>
-                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
-                        </button>
-                        <div id="backupDropdown" class="absolute right-0 mt-1 w-48 bg-lasd-header rounded-lg shadow-2xl border border-lasd-border hidden z-50 py-1">
-                            <a href="#" onclick="exportCSV(); closeBackupMenu();" class="block px-4 py-2 text-xs text-lasd-tan hover:bg-lasd-green hover:text-white"><i class="fa-solid fa-file-csv mr-2 text-green-400"></i>Export CSV</a>
-                            <a href="#" onclick="exportJSON(); closeBackupMenu();" class="block px-4 py-2 text-xs text-lasd-tan hover:bg-lasd-green hover:text-white"><i class="fa-solid fa-file-code mr-2 text-yellow-400"></i>Export Backup (JSON)</a>
-                            <label id="importLabel" class="block px-4 py-2 text-xs text-lasd-tan hover:bg-lasd-green hover:text-white cursor-pointer hidden">
-                                <i class="fa-solid fa-file-import mr-2 text-blue-400"></i>Import Backup
-                                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importJSON(event); closeBackupMenu();">
-                            </label>
-                            <div id="resetDivider" class="border-t border-lasd-border/40 my-1 hidden"></div>
-                            <a id="resetBtnLink" href="#" onclick="resetToDefaultData(); closeBackupMenu();" class="block px-4 py-2 text-xs text-red-400 hover:bg-red-900/30 hidden"><i class="fa-solid fa-rotate-left mr-2"></i>Reset Default Sheet</a>
-                        </div>
+                    <div id="backupDropdown" class="absolute right-0 mt-1 w-48 bg-lasd-header rounded-lg shadow-2xl border border-lasd-border hidden z-50 py-1">
+                        <a href="#" onclick="exportCSV(); closeBackupMenu();" class="block px-4 py-2 text-xs text-lasd-tan hover:bg-lasd-green hover:text-white"><i class="fa-solid fa-file-csv mr-2 text-green-400"></i>Export CSV</a>
+                        <a href="#" onclick="exportJSON(); closeBackupMenu();" class="block px-4 py-2 text-xs text-lasd-tan hover:bg-lasd-green hover:text-white"><i class="fa-solid fa-file-code mr-2 text-yellow-400"></i>Export Backup (JSON)</a>
+                        <label id="importLabel" class="block px-4 py-2 text-xs text-lasd-tan hover:bg-lasd-green hover:text-white cursor-pointer hidden">
+                            <i class="fa-solid fa-file-import mr-2 text-blue-400"></i>Import Backup
+                            <input type="file" id="importFile" accept=".json" class="hidden" onchange="importJSON(event); closeBackupMenu();">
+                        </label>
+                        <div id="resetDivider" class="border-t border-lasd-border/40 my-1 hidden"></div>
+                        <a id="resetBtnLink" href="#" onclick="resetToDefaultData(); closeBackupMenu();" class="block px-4 py-2 text-xs text-red-400 hover:bg-red-900/30 hidden"><i class="fa-solid fa-rotate-left mr-2"></i>Reset Default Sheet</a>
                     </div>
-
                 </div>
 
             </div>
         </div>
 
-        <!-- MAIN ROSTER SHEET CONTAINER -->
-        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-4">
-            <div class="bg-[#d2c4a3] p-2.5 rounded-t-xl border-t-4 border-lasd-gold shadow-2xl text-center border-b border-lasd-green/30 flex justify-between items-center">
-                <div class="w-1/4 text-left pl-2 hidden sm:block">
-                    <span id="dragInstruction" class="text-xs font-bold text-lasd-dark uppercase font-heading hidden"><i class="fa-solid fa-arrows-up-down-left-right text-lasd-gold mr-1"></i> Drag Rows to Reorder</span>
+        <!-- MAIN CENTERED ROSTER SHEET CONTAINER -->
+        <main class="flex-grow w-full mx-auto px-4 sm:px-8 py-4 flex justify-center">
+            <div class="w-max max-w-full">
+                <div class="bg-[#d2c4a3] p-2.5 rounded-t-xl border-t-4 border-lasd-gold shadow-2xl text-center border-b border-lasd-green/30 flex justify-between items-center">
+                    <div class="w-1/4 text-left pl-2 hidden sm:block">
+                        <span id="dragInstruction" class="text-xs font-bold text-lasd-dark uppercase font-heading hidden"><i class="fa-solid fa-arrows-up-down-left-right text-lasd-gold mr-1"></i> Drag Rows to Reorder</span>
+                    </div>
+                    <h2 class="font-serif text-lg sm:text-xl font-extrabold tracking-wider text-lasd-header uppercase w-full sm:w-1/2">
+                        Los Angeles Sheriff's Official Roster
+                    </h2>
+                    <div class="w-1/4 text-right pr-2 hidden sm:block">
+                        <span class="text-xs font-mono font-bold text-lasd-dark">VER 2026.2</span>
+                    </div>
                 </div>
-                <h2 class="font-serif text-lg sm:text-xl font-extrabold tracking-wider text-lasd-header uppercase w-full sm:w-1/2">
-                    Los Angeles Sheriff's Official Roster
-                </h2>
-                <div class="w-1/4 text-right pr-2 hidden sm:block">
-                    <span class="text-xs font-mono font-bold text-lasd-dark">VER 2026.2</span>
-                </div>
-            </div>
 
-            <div class="shadow-2xl rounded-b-xl border border-lasd-border/60 bg-[#e8dcbe]">
-                <table class="roster-table text-left">
-                    <thead>
-                        <tr>
-                            <th class="w-24">Group</th>
-                            <th class="w-16">Designator</th>
-                            <th class="w-36">Name</th>
-                            <th class="w-24">Leadership</th>
-                            <th class="w-28">Rank</th>
-                            <th class="w-16 text-center">Badge</th>
-                            <th class="w-20 text-center">Insignia</th>
-                            <th class="w-8 text-center text-[10px] text-[#f3e5ab]" title="Field Training Officer">FTO</th>
-                            <th class="w-8 text-center text-[10px] text-[#f3e5ab]" title="Field Training Administrator">FTA</th>
-                            <th class="w-8 text-center text-[10px] text-gray-300" title="Operation Safe Streets">OSS</th>
-                            <th class="w-8 text-center text-[10px] text-green-400" title="Special Enforcement Bureau">SEB</th>
-                            <th class="w-8 text-center text-[10px] text-purple-300" title="Reserve Corps">RC</th>
-                            <th class="w-8 text-center text-[10px] text-yellow-300" title="Motorcycle Detail">Moto</th>
-                            <th class="w-8 text-center text-[10px] text-blue-300" title="Air Support Detail">Air</th>
-                            <th class="w-8 text-center text-[10px] text-red-400" title="Canine Unit">K9</th>
-                            <th class="w-16 text-center">Strikes</th>
-                            <th class="w-24 text-center">Status</th>
-                            <th class="w-20 text-center">Date Joined</th>
-                            <th class="w-20 text-center">Rank Change</th>
-                            <th class="w-36">Additional Notes</th>
-                            <th id="actionHeaderCol" class="w-16 text-center hidden">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rosterTableBody">
-                        <!-- Dynamic Rows Rendered via JavaScript -->
-                    </tbody>
-                </table>
+                <div class="shadow-2xl rounded-b-xl border border-lasd-border/60 bg-[#e8dcbe] overflow-x-auto">
+                    <table class="roster-table text-left">
+                        <thead>
+                            <tr>
+                                <th class="w-36">Group</th>
+                                <th class="w-24">Designator</th>
+                                <th class="w-44">Name</th>
+                                <th class="w-32">Leadership</th>
+                                <th class="w-36">Rank</th>
+                                <th class="w-20 text-center">Badge</th>
+                                <th class="w-24 text-center">Insignia</th>
+                                <th class="w-9 text-center text-[10px] text-[#f3e5ab]" title="Field Training Officer">FTO</th>
+                                <th class="w-9 text-center text-[10px] text-[#f3e5ab]" title="Field Training Administrator">FTA</th>
+                                <th class="w-9 text-center text-[10px] text-gray-300" title="Operation Safe Streets">OSS</th>
+                                <th class="w-9 text-center text-[10px] text-green-400" title="Special Enforcement Bureau">SEB</th>
+                                <th class="w-9 text-center text-[10px] text-purple-300" title="Reserve Corps">RC</th>
+                                <th class="w-9 text-center text-[10px] text-yellow-300" title="Motorcycle Detail">Moto</th>
+                                <th class="w-9 text-center text-[10px] text-blue-300" title="Air Support Detail">Air</th>
+                                <th class="w-9 text-center text-[10px] text-red-400" title="Canine Unit">K9</th>
+                                <th class="w-20 text-center">Strikes</th>
+                                <th class="w-44 text-center">Status</th>
+                                <th class="w-28 text-center">Date Joined</th>
+                                <th class="w-28 text-center">Rank Change</th>
+                                <th class="w-48">Additional Notes</th>
+                                <th id="actionHeaderCol" class="w-20 text-center hidden">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rosterTableBody">
+                            <!-- Dynamic Rows Rendered via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
@@ -1033,6 +1051,7 @@
                         <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Duty Status</label>
                         <select id="modalStatus" class="w-full bg-lasd-dark text-white border border-lasd-border rounded-lg px-3 py-1.5 text-xs focus:border-lasd-gold">
                             <option value="Active">Active</option>
+                            <option value="Officer of the Month">Officer of the Month</option>
                             <option value="LOA">LOA</option>
                             <option value="Suspended">Suspended</option>
                             <option value="Inactive">Inactive</option>
@@ -1166,7 +1185,7 @@
 
         // Initial Default Roster Data
         const DEFAULT_ROSTER = [
-            { id: "1", group: "Department Lead", designator: "I-08", name: "Mateo Strap", leadership: "Department", rank: "Chief", badge: "6600", certs: { fto: true, fta: true, oss: true, seb: true, rc: true, moto: true, air: true, k9: true }, strikes: 0, status: "Active", dateJoined: "", rankChange: "", notes: "" },
+            { id: "1", group: "Department Lead", designator: "I-08", name: "Mateo Strap", leadership: "Department", rank: "Chief", badge: "6600", certs: { fto: true, fta: true, oss: true, seb: true, rc: true, moto: true, air: true, k9: true }, strikes: 0, status: "Officer of the Month", dateJoined: "", rankChange: "", notes: "Exemplary leadership and dedication." },
             { id: "2", group: "Department Lead", designator: "I-09", name: "Jay Mobb", leadership: "Department", rank: "Chief Asst.", badge: "6601", certs: { fto: true, fta: true, oss: true, seb: true, rc: true, moto: true, air: true, k9: true }, strikes: 0, status: "Active", dateJoined: "", rankChange: "", notes: "" },
             { id: "3", group: "High Command", designator: "Car-1", name: "Maverick Miller", leadership: "Department", rank: "Sheriff", badge: "6602", certs: { fto: true, fta: true, oss: true, seb: true, rc: true, moto: true, air: true, k9: true }, strikes: 0, status: "Active", dateJoined: "", rankChange: "", notes: "" },
             { id: "4", group: "High Command", designator: "Car-2", name: "S. Valdez", leadership: "Department", rank: "Undersheriff", badge: "6603", certs: { fto: true, fta: true, oss: true, seb: true, rc: true, moto: true, air: true, k9: true }, strikes: 0, status: "Active", dateJoined: "", rankChange: "", notes: "" },
@@ -1253,14 +1272,60 @@
 
         let rosterData = [];
 
+        // Dynamic Officer of the Month Renderer
+        function renderHomeOotm() {
+            const container = document.getElementById('homeOotmContainer');
+            if (!container) return;
+
+            const ootmOfficer = rosterData.find(o => o.status === 'Officer of the Month');
+
+            if (!ootmOfficer) {
+                container.innerHTML = `
+                    <div class="bg-lasd-header border border-lasd-border/60 rounded-xl p-6 text-center text-gray-400">
+                        <i class="fa-solid fa-award text-lasd-gold text-4xl mb-2 opacity-50"></i>
+                        <p class="text-sm">No Officer of the Month currently designated. Select "Officer of the Month" under an officer's status on the Roster page.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="bg-gradient-to-r from-lasd-header via-lasd-green/80 to-lasd-header border-2 border-lasd-gold rounded-2xl p-6 md:p-8 shadow-2xl flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 text-lasd-gold/5 text-9xl pointer-events-none">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-lasd-dark border-4 border-lasd-gold flex items-center justify-center text-lasd-gold text-5xl shadow-2xl flex-shrink-0 gold-glow">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div class="space-y-2 text-center md:text-left flex-grow">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-lasd-gold/20 text-lasd-gold border border-lasd-gold/40 rounded-full font-bold text-xs uppercase tracking-widest">
+                            <i class="fa-solid fa-star text-lasd-gold"></i> Featured Department Recognition
+                        </div>
+                        <h3 class="font-heading text-2xl sm:text-3xl font-black text-white uppercase tracking-wide">
+                            ${ootmOfficer.name || 'Unknown Officer'}
+                        </h3>
+                        <p class="text-xs sm:text-sm text-lasd-gold font-bold uppercase tracking-wider">
+                            ${ootmOfficer.rank} • Callsign: <span class="font-mono text-white">${ootmOfficer.designator}</span> • Badge #${ootmOfficer.badge || 'N/A'}
+                        </p>
+                        <p class="text-xs text-gray-300 max-w-xl italic">
+                            "${ootmOfficer.notes || 'Recognized for outstanding dedication, professional excellence, and exceptional service to Los Angeles County.'}"
+                        </p>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button onclick="switchTab('roster')" class="bg-lasd-gold hover:bg-yellow-500 text-lasd-dark font-bold px-5 py-2.5 rounded-lg shadow-xl text-xs uppercase tracking-wider transition">
+                            View Roster Profile
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         // Dynamic Front Page Leadership Card Renderer
         function renderHomeLeadershipCards() {
             const container = document.getElementById('homeCommandContainer');
             if (!container) return;
 
-            // Get top 4 officers directly from current rosterData
             const top4 = rosterData.slice(0, 4);
-
             const titles = ["Department Leader", "Second In Command", "Bureau Chief", "Assistant Chief"];
             const icons = ["fa-user-tie", "fa-user-shield", "fa-asterisk", "fa-ribbon"];
 
@@ -1303,7 +1368,6 @@
                 if (result && result.record && Array.isArray(result.record.roster) && result.record.roster.length > 0) {
                     rosterData = result.record.roster;
                 } else {
-                    // If bin is empty, push default roster to cloud automatically
                     rosterData = [...DEFAULT_ROSTER];
                     saveRosterToCloud();
                 }
@@ -1314,11 +1378,12 @@
             }
             renderRoster();
             renderHomeLeadershipCards();
+            renderHomeOotm();
         }
 
         // Save roster changes directly to Cloud Database
         async function saveRosterToCloud() {
-            localStorage.setItem('lasd_roster_data_v2', JSON.stringify(rosterData)); // Local cache backup
+            localStorage.setItem('lasd_roster_data_v2', JSON.stringify(rosterData));
 
             const syncIndicator = document.getElementById('syncIndicator');
             const syncText = document.getElementById('syncText');
@@ -1342,6 +1407,7 @@
                 syncText.innerText = "Sync Failed (Offline)";
             }
             renderHomeLeadershipCards();
+            renderHomeOotm();
         }
 
         // Tab Navigation Switcher
@@ -1370,6 +1436,7 @@
                 homePage.classList.add('flex');
                 tabHome.classList.add('active');
                 renderHomeLeadershipCards();
+                renderHomeOotm();
             } else if (tabName === 'roster') {
                 rosterPage.classList.remove('hidden');
                 rosterPage.classList.add('flex');
@@ -1416,19 +1483,25 @@
             let supCount = 0;
             let loaCount = 0;
             let otherCount = 0;
+            let totalSwornCount = 0;
 
             let currentGroupHeader = '';
 
             rosterData.forEach((officer, index) => {
-                if (officer.status === 'Active') activeCount++;
-                if (officer.status === 'LOA') loaCount++;
-                if (officer.status === 'Suspended' || officer.status === 'Inactive') otherCount++;
-                if (officer.group === 'High Command' || officer.group === 'Department Lead') hcCount++;
-                if (officer.group === 'Patrol Supervisor' || officer.group === 'Low Command') supCount++;
+                const isVacant = !officer.name || officer.name.trim() === '' || officer.name === '-';
+
+                if (!isVacant) {
+                    totalSwornCount++;
+                    if (officer.status === 'Active' || officer.status === 'Officer of the Month') activeCount++;
+                    if (officer.status === 'LOA') loaCount++;
+                    if (officer.status === 'Suspended' || officer.status === 'Inactive') otherCount++;
+                    if (officer.group === 'High Command' || officer.group === 'Department Lead') hcCount++;
+                    if (officer.group === 'Patrol Supervisor' || officer.group === 'Low Command') supCount++;
+                }
 
                 if (fGroup !== 'ALL' && officer.group !== fGroup) return;
                 if (fStatus !== 'ALL' && officer.status !== fStatus) return;
-                if (fCert !== 'ALL' && !officer.certs[fCert]) return;
+                if (fCert !== 'ALL' && (!officer.certs || !officer.certs[fCert])) return;
 
                 if (search && 
                     !officer.name.toLowerCase().includes(search) && 
@@ -1439,7 +1512,6 @@
                     return;
                 }
 
-                // Render group category banner header above each group section
                 if (officer.group && officer.group !== currentGroupHeader) {
                     currentGroupHeader = officer.group;
                     const groupTr = document.createElement('tr');
@@ -1481,6 +1553,7 @@
                 }
 
                 let statusClass = 'status-active';
+                if (officer.status === 'Officer of the Month') statusClass = 'status-ootm';
                 if (officer.status === 'LOA') statusClass = 'status-loa';
                 if (officer.status === 'Suspended') statusClass = 'status-suspended';
                 if (officer.status === 'Inactive') statusClass = 'status-inactive';
@@ -1507,6 +1580,7 @@
                 }
 
                 const disabledAttr = isEditor ? '' : 'disabled';
+                const certs = officer.certs || {};
 
                 let actionsHTML = '';
                 if (isEditor) {
@@ -1526,18 +1600,19 @@
                     <td class="roster-td font-bold text-xs">${officer.rank}</td>
                     <td class="roster-td font-mono text-center text-xs font-bold">${officer.badge || '-'}</td>
                     <td class="roster-td text-center">${insigniaHTML}</td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-brown" ${officer.certs.fto ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'fto', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-brown" ${officer.certs.fta ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'fta', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-black" ${officer.certs.oss ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'oss', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-green" ${officer.certs.seb ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'seb', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-purple" ${officer.certs.rc ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'rc', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-yellow" ${officer.certs.moto ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'moto', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-blue" ${officer.certs.air ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'air', this.checked)"></td>
-                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-red" ${officer.certs.k9 ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'k9', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-brown" ${certs.fto ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'fto', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-brown" ${certs.fta ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'fta', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-black" ${certs.oss ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'oss', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-green" ${certs.seb ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'seb', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-purple" ${certs.rc ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'rc', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-yellow" ${certs.moto ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'moto', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-blue" ${certs.air ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'air', this.checked)"></td>
+                    <td class="roster-td text-center"><input type="checkbox" class="cert-checkbox cb-red" ${certs.k9 ? 'checked' : ''} ${disabledAttr} onchange="updateCert('${officer.id}', 'k9', this.checked)"></td>
                     <td class="roster-td text-center space-x-0.5">${strikesHTML}</td>
                     <td class="roster-td text-center">
                         <select class="status-select ${statusClass}" ${disabledAttr} onchange="updateStatus('${officer.id}', this.value)">
                             <option value="Active" ${officer.status === 'Active' ? 'selected' : ''}>Active</option>
+                            <option value="Officer of the Month" ${officer.status === 'Officer of the Month' ? 'selected' : ''}>★ Officer of the Month</option>
                             <option value="LOA" ${officer.status === 'LOA' ? 'selected' : ''}>LOA</option>
                             <option value="Suspended" ${officer.status === 'Suspended' ? 'selected' : ''}>Suspended</option>
                             <option value="Inactive" ${officer.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
@@ -1552,7 +1627,7 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('stat-total').innerText = rosterData.length;
+            document.getElementById('stat-total').innerText = totalSwornCount;
             document.getElementById('stat-active').innerText = activeCount;
             document.getElementById('stat-hc').innerText = hcCount;
             document.getElementById('stat-supervisors').innerText = supCount;
@@ -1562,22 +1637,28 @@
             document.getElementById('home-stat-active').innerText = activeCount;
         }
 
-        function updateCert(id, certKey, isChecked) {
-            if (!checkIsEditor()) return;
-            const officer = rosterData.find(o => o.id === id);
-            if (officer) {
-                officer.certs[certKey] = isChecked;
-                saveRosterToCloud();
-            }
-        }
-
         function updateStatus(id, newStatus) {
             if (!checkIsEditor()) return;
+            if (newStatus === 'Officer of the Month') {
+                rosterData.forEach(o => {
+                    if (o.status === 'Officer of the Month') o.status = 'Active';
+                });
+            }
             const officer = rosterData.find(o => o.id === id);
             if (officer) {
                 officer.status = newStatus;
                 saveRosterToCloud();
                 renderRoster();
+            }
+        }
+
+        function updateCert(id, certKey, isChecked) {
+            if (!checkIsEditor()) return;
+            const officer = rosterData.find(o => o.id === id);
+            if (officer) {
+                if (!officer.certs) officer.certs = {};
+                officer.certs[certKey] = isChecked;
+                saveRosterToCloud();
             }
         }
 
@@ -1630,14 +1711,15 @@
             document.getElementById('modalRankChange').value = officer.rankChange || '';
             document.getElementById('modalNotes').value = officer.notes || '';
 
-            document.getElementById('modalCertFTO').checked = officer.certs.fto;
-            document.getElementById('modalCertFTA').checked = officer.certs.fta;
-            document.getElementById('modalCertOSS').checked = officer.certs.oss;
-            document.getElementById('modalCertSEB').checked = officer.certs.seb;
-            document.getElementById('modalCertRC').checked = officer.certs.rc;
-            document.getElementById('modalCertMoto').checked = officer.certs.moto;
-            document.getElementById('modalCertAir').checked = officer.certs.air;
-            document.getElementById('modalCertK9').checked = officer.certs.k9;
+            const certs = officer.certs || {};
+            document.getElementById('modalCertFTO').checked = !!certs.fto;
+            document.getElementById('modalCertFTA').checked = !!certs.fta;
+            document.getElementById('modalCertOSS').checked = !!certs.oss;
+            document.getElementById('modalCertSEB').checked = !!certs.seb;
+            document.getElementById('modalCertRC').checked = !!certs.rc;
+            document.getElementById('modalCertMoto').checked = !!certs.moto;
+            document.getElementById('modalCertAir').checked = !!certs.air;
+            document.getElementById('modalCertK9').checked = !!certs.k9;
 
             document.getElementById('officerModal').classList.remove('hidden');
         }
@@ -1661,6 +1743,12 @@
             const dateJoined = document.getElementById('modalDateJoined').value;
             const rankChange = document.getElementById('modalRankChange').value;
             const notes = document.getElementById('modalNotes').value;
+
+            if (status === 'Officer of the Month') {
+                rosterData.forEach(o => {
+                    if (o.id !== id && o.status === 'Officer of the Month') o.status = 'Active';
+                });
+            }
 
             const certs = {
                 fto: document.getElementById('modalCertFTO').checked,
